@@ -7,9 +7,10 @@ import {
 } from "react-router-dom";
 import Login from "./components/login/Login.js";
 import Dashboard from "./components/Dashboard/Dashboard.js";
+import authService from "./services/AuthService";
 
 const App = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
+  const isAuthenticated = authService.isLoggedIn();
 
   return (
     <Router>

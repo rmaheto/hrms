@@ -1,9 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react"; // Add useState to the import statement
 import {
   AppBar,
   Toolbar,
-  IconButton,
   Typography,
   Drawer,
   List,
@@ -14,23 +12,31 @@ import {
   Button,
 } from "@mui/material";
 import { Home, People, BarChart, Settings, Logout } from "@mui/icons-material";
+import authService from "../../services/AuthService";
+import { Navigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const user = token ? JSON.parse(atob(token.split(".")[1])) : null; // Decoding token to get user info
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+
+  // Decode the user information from the token
+  const user = authService.getUserFromToken;
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    authService.removeToken(); // Clear the token
+    setIsLoggedOut(true); // Mark as logged out to trigger redirect
   };
+
+  // If the user is logged out, redirect to the login page
+  if (isLoggedOut) {
+    window.location.href = "/";
+  }
 
   const getInitials = (name) => {
     return name ? name.charAt(0).toUpperCase() : "";
   };
 
   const menuItems = [
-    { text: "Home", icon: <Home /> }, // Notice that icon is a component here
+    { text: "Home", icon: <Home /> },
     { text: "Employees", icon: <People /> },
     { text: "Reports", icon: <BarChart /> },
     { text: "Settings", icon: <Settings /> },
@@ -44,11 +50,10 @@ const Dashboard = () => {
       >
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Box display="flex" alignItems="center">
-            {user?.profilePicture ? (
-              <Avatar alt="Profile" src={user.profilePicture} />
-            ) : (
-              <Avatar>{getInitials(user?.username)}</Avatar>
-            )}
+            <Avatar
+              alt={getInitials(user.username)}
+              src={user.profilePicture}
+            />
             <Button
               variant="contained"
               color="secondary"
@@ -73,7 +78,9 @@ const Dashboard = () => {
         <List>
           {menuItems.map((item, index) => (
             <ListItem button key={index}>
-              {item.icon} {/* Render the icon directly */}
+              {" "}
+              {/* Correctly pass `button` as a boolean */}
+              {item.icon}
               <ListItemText primary={item.text} sx={{ ml: 2 }} />
             </ListItem>
           ))}
@@ -85,7 +92,7 @@ const Dashboard = () => {
       >
         <Toolbar />
         <Typography variant="h4">
-          Welcome to HRMS Dashboard, {user?.username}
+          Welcome to HRMS Dashboard, {user?.username || "Guest"}
         </Typography>
       </Box>
     </Box>
