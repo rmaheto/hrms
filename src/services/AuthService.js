@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode"; // Import jwtDecode to decode JWT tokens
 class AuthService {
   constructor() {
     this.tokenKey = "token"; // Key to store the token in localStorage
-    this.apiUrl = "http://localhost:8090/api"; // Base API URL
+    this.apiUrl = "http://localhost:8080/api"; // Base API URL
   }
 
   // Login method to authenticate the user

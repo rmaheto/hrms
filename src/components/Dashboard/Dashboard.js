@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Add useState to the import statement
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -11,22 +11,29 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { Home, People, BarChart, Settings, Logout } from "@mui/icons-material";
+import {
+  Home,
+  People,
+  BarChart,
+  Settings,
+  Logout,
+  Group,
+  AssignmentTurnedIn,
+} from "@mui/icons-material";
+import { useNavigate, Link } from "react-router-dom";
 import authService from "../../services/AuthService";
-import { Navigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const navigate = useNavigate();
 
-  // Decode the user information from the token
-  const user = authService.getUserFromToken;
+  const user = authService.getUserFromToken();
 
   const handleLogout = () => {
-    authService.removeToken(); // Clear the token
-    setIsLoggedOut(true); // Mark as logged out to trigger redirect
+    authService.removeToken();
+    setIsLoggedOut(true);
   };
 
-  // If the user is logged out, redirect to the login page
   if (isLoggedOut) {
     window.location.href = "/";
   }
@@ -36,11 +43,17 @@ const Dashboard = () => {
   };
 
   const menuItems = [
-    { text: "Home", icon: <Home /> },
-    { text: "Employees", icon: <People /> },
-    { text: "Reports", icon: <BarChart /> },
-    { text: "Settings", icon: <Settings /> },
+    { text: "Home", icon: <Home />, path: "/dashboard" },
+    { text: "Employees", icon: <People />, path: "/employees" },
+    { text: "Attendance", icon: <AssignmentTurnedIn />, path: "/attendance" },
+    { text: "Reports", icon: <BarChart />, path: "/reports" },
+    { text: "Users", icon: <Group />, path: "/users" },
+    { text: "Settings", icon: <Settings />, path: "/settings" },
   ];
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -77,9 +90,13 @@ const Dashboard = () => {
         <Toolbar />
         <List>
           {menuItems.map((item, index) => (
-            <ListItem button key={index}>
-              {" "}
-              {/* Correctly pass `button` as a boolean */}
+            <ListItem
+              button // Explicitly passing `button` as a boolean prop
+              component={Link}
+              to={item.path}
+              key={index}
+              onClick={() => handleMenuClick(item.path)}
+            >
               {item.icon}
               <ListItemText primary={item.text} sx={{ ml: 2 }} />
             </ListItem>
