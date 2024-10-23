@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   TextField,
@@ -21,9 +20,14 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Use authService to login
-      await authService.login(username, password);
-      navigate("/dashboard"); // Redirect to dashboard on successful login
+      // Assuming login returns a token
+      const token = await authService.login(username, password);
+
+      if (token) {
+        window.location.href = "/dashboard";
+      } else {
+        setError("Login failed. Please try again.");
+      }
     } catch (err) {
       setError("Invalid credentials. Please try again.");
     }

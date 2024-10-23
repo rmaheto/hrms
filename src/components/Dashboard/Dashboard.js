@@ -1,9 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  IconButton,
   Typography,
   Drawer,
   List,
@@ -13,28 +11,49 @@ import {
   Box,
   Button,
 } from "@mui/material";
-import { Home, People, BarChart, Settings, Logout } from "@mui/icons-material";
+import {
+  Home,
+  People,
+  BarChart,
+  Settings,
+  Logout,
+  Group,
+  AssignmentTurnedIn,
+} from "@mui/icons-material";
+import { useNavigate, Link } from "react-router-dom";
+import authService from "../../services/AuthService";
 
 const Dashboard = () => {
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const user = token ? JSON.parse(atob(token.split(".")[1])) : null; // Decoding token to get user info
+
+  const user = authService.getUserFromToken();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    authService.removeToken();
+    setIsLoggedOut(true);
   };
+
+  if (isLoggedOut) {
+    window.location.href = "/";
+  }
 
   const getInitials = (name) => {
     return name ? name.charAt(0).toUpperCase() : "";
   };
 
   const menuItems = [
-    { text: "Home", icon: <Home /> }, // Notice that icon is a component here
-    { text: "Employees", icon: <People /> },
-    { text: "Reports", icon: <BarChart /> },
-    { text: "Settings", icon: <Settings /> },
+    { text: "Home", icon: <Home />, path: "/dashboard" },
+    { text: "Employees", icon: <People />, path: "/employees" },
+    { text: "Attendance", icon: <AssignmentTurnedIn />, path: "/attendance" },
+    { text: "Reports", icon: <BarChart />, path: "/reports" },
+    { text: "Users", icon: <Group />, path: "/users" },
+    { text: "Settings", icon: <Settings />, path: "/settings" },
   ];
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -44,11 +63,10 @@ const Dashboard = () => {
       >
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Box display="flex" alignItems="center">
-            {user?.profilePicture ? (
-              <Avatar alt="Profile" src={user.profilePicture} />
-            ) : (
-              <Avatar>{getInitials(user?.username)}</Avatar>
-            )}
+            <Avatar
+              alt={getInitials(user.username)}
+              src={user.profilePicture}
+            />
             <Button
               variant="contained"
               color="secondary"
@@ -72,8 +90,14 @@ const Dashboard = () => {
         <Toolbar />
         <List>
           {menuItems.map((item, index) => (
-            <ListItem button key={index}>
-              {item.icon} {/* Render the icon directly */}
+            <ListItem
+              button // Explicitly passing `button` as a boolean prop
+              component={Link}
+              to={item.path}
+              key={index}
+              onClick={() => handleMenuClick(item.path)}
+            >
+              {item.icon}
               <ListItemText primary={item.text} sx={{ ml: 2 }} />
             </ListItem>
           ))}
@@ -85,7 +109,7 @@ const Dashboard = () => {
       >
         <Toolbar />
         <Typography variant="h4">
-          Welcome to HRMS Dashboard, {user?.username}
+          Welcome to HRMS Dashboard, {user?.username || "Guest"}
         </Typography>
       </Box>
     </Box>
