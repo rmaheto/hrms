@@ -9,7 +9,7 @@ import Dashboard from "./components/Dashboard/Dashboard.js";
 import EmployeesPage from "./components/Employees/EmployeesPage";
 import UserList from "./components/Users/UserList.js";
 import Layout from "./components/Layout";
-import Login from "./components/Login/Login.js";
+import Login from "./components/login/Login.js";
 import authService from "./services/AuthService";
 import AttendancePage from "./components/Attendance/AttendancePage";
 

@@ -2,66 +2,147 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Button } from "@mui/material";
 import EmployeeTable from "./EmployeeTable";
 import EmployeeModal from "./EmployeeModal";
+import ViewEmployeeModal from "./ViewEmployeeModal";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import employeeService from "../../services/EmployeeService";
 import departmentService from "../../services/DepartmentService";
 
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
+  const [modalStates, setModalStates] = useState({
+    employeeModal: false,
+    viewModal: false,
+    deleteModal: false
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-  // Pagination states
-  const [page, setPage] = useState(0); // Set initial page to 0
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Default to 5 rows per page
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
-    // Fetch employees and departments on component mount
-    employeeService.fetchEmployees().then(setEmployees);
-    departmentService.fetchDepartments().then(setDepartments);
+    loadData();
   }, []);
 
-  // Handle saving employee (create or update)
-  const handleSaveEmployee = (employeeData) => {
-    if (isEditing) {
-      // Update existing employee
-      employeeService.updateEmployee(employeeData).then((updatedEmployee) => {
-        setEmployees((prevEmployees) =>
-          prevEmployees.map((emp) =>
+  const loadData = async () => {
+    try {
+      const [employeesData, departmentsData] = await Promise.all([
+        employeeService.fetchEmployees(),
+        departmentService.fetchDepartments()
+      ]);
+      setEmployees(employeesData);
+      setDepartments(departmentsData);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
+  const handleModalClose = (modalType) => {
+    console.log('Closing modal:', modalType); // Add logging
+    setModalStates(prev => ({
+      ...prev,
+      [modalType]: false
+    }));
+    if (modalType === 'employeeModal') {
+      setSelectedEmployee(null);
+      setIsEditing(false);
+    }
+  };
+
+  const handleModalOpen = (modalType, employee = null, isEdit = false) => {
+    setModalStates({
+      employeeModal: false,
+      viewModal: false,
+      deleteModal: false,
+      [modalType]: true})
+    setModalStates(prev => ({ ...prev, [modalType]: true }));
+    setSelectedEmployee(employee);
+    setIsEditing(isEdit);
+  };
+
+  const handleAddEmployee = () => {
+    console.log('Opening Add Employee Modal'); // Add logging
+    setModalStates({
+      employeeModal: true,
+      viewModal: false,
+      deleteModal: false
+    });
+    setSelectedEmployee(null);
+    setIsEditing(false);
+  };
+
+  const handleEditEmployee = (employee) => {
+    console.log('Opening Edit Employee Modal', employee); // Add logging
+    setModalStates({
+      employeeModal: true,
+      viewModal: false,
+      deleteModal: false
+    });
+    setSelectedEmployee(employee);
+    setIsEditing(true);
+  };
+
+  const handleViewEmployee = (employee) => {
+    console.log('Opening View Employee Modal', employee); // Add logging
+    setModalStates({
+      employeeModal: false,
+      viewModal: true,
+      deleteModal: false
+    });
+    setSelectedEmployee(employee);
+  };
+
+  const handleDeleteClick = (employee) => {
+    setModalStates({
+      employeeModal: false,
+      viewModal: false,
+      deleteModal: true
+    });
+    setSelectedEmployee(employee);
+  };
+
+  const handleSaveEmployee = async (employeeData) => {
+    try {
+      if (isEditing) {
+        const updatedEmployee = await employeeService.updateEmployee(employeeData);
+        setEmployees(prevEmployees =>
+          prevEmployees.map(emp =>
             emp.id === updatedEmployee.id ? updatedEmployee : emp
           )
         );
-      });
-    } else {
-      // Create new employee
-      employeeService.addEmployee(employeeData).then((newEmployee) => {
-        setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
-      });
+      } else {
+        const newEmployee = await employeeService.addEmployee(employeeData);
+        setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
+      }
+      handleModalClose('employeeModal');
+    } catch (error) {
+      console.error("Error saving employee:", error);
+      // Here you might want to show an error message to the user
     }
-    setOpenModal(false); // Close modal after saving
   };
 
-  // Handle page change for pagination
+  const handleDeleteEmployee = async () => {
+    try {
+      if (selectedEmployee) {
+        await employeeService.deleteEmployee(selectedEmployee.id);
+        setEmployees(prevEmployees =>
+          prevEmployees.filter(emp => emp.id !== selectedEmployee.id)
+        );
+        handleModalClose('deleteModal');
+      }
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      // Here you might want to show an error message to the user
+    }
+  };
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
-  // Handle rows per page change for pagination
   const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); // Ensure it's an integer
-    setPage(0); // Reset page when changing rows per page
-  };
-
-  // Handle opening the modal to add or edit an employee
-  const handleOpenModal = (employee = null) => {
-    setIsEditing(!!employee);
-    setSelectedEmployee(employee);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
@@ -74,28 +155,45 @@ const EmployeesPage = () => {
           variant="contained"
           color="primary"
           sx={{ marginBottom: 2, float: "right" }}
-          onClick={() => handleOpenModal(null)}
+          onClick={handleAddEmployee}
         >
           Add Employee
         </Button>
         <div style={{ clear: "both" }}></div>
+        
         <EmployeeTable
           employees={employees}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
-          onEditEmployee={handleOpenModal}
+          onViewEmployee={handleViewEmployee}
+          onEditEmployee={handleEditEmployee}
+          onDeleteEmployee={handleDeleteClick}
         />
-        {openModal && (
-          <EmployeeModal
-            open={openModal}
-            onClose={handleCloseModal}
-            employee={selectedEmployee}
-            onSaveEmployee={handleSaveEmployee}
-            isEditing={isEditing}
-          />
-        )}
+
+       {/* Employee Modal for Add/Edit */}
+       <EmployeeModal
+          open={modalStates.employeeModal}
+          onClose={() => handleModalClose('employeeModal')}
+          employee={selectedEmployee}
+          onSaveEmployee={handleSaveEmployee}
+          isEditing={isEditing}
+          departments={departments}
+        />
+
+        <ViewEmployeeModal
+          open={modalStates.viewModal}
+          onClose={() => handleModalClose('viewModal')}
+          employee={selectedEmployee}
+        />
+
+        <DeleteConfirmationModal
+          open={modalStates.deleteModal}
+          onClose={() => handleModalClose('deleteModal')}
+          onConfirm={handleDeleteEmployee}
+          employee={selectedEmployee}
+        />
       </CardContent>
     </Card>
   );
