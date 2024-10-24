@@ -81,6 +81,27 @@ const createUser = async (user) => {
   }
 };
 
+// Update user's username and roles
+const updateUser = async (userData) => {
+  let userId = userData.id;
+  try {
+    const response = await fetch(`${API_BASE_URL}/${userId}/update`, {
+      method: "PATCH",
+      headers: getHeaders(),
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update user with ID ${userId}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error updating user with ID ${userId}:`, error);
+    throw error;
+  }
+};
+
 const updateUserPassword = async (userId, passwordData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/${userId}/update-password`, {
@@ -123,6 +144,7 @@ export default {
   fetchUsers,
   fetchUserById,
   createUser,
+  updateUser,
   updateUserPassword,
   fetchRoles,
 };

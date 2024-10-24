@@ -18,12 +18,14 @@ import {
   Settings,
   Logout,
   Group,
+  AssignmentTurnedIn,
 } from "@mui/icons-material";
 
 const Layout = () => {
   const menuItems = [
     { text: "Home", icon: <Home />, path: "/dashboard" },
     { text: "Employees", icon: <People />, path: "/employees" },
+    { text: "Attendance", icon: <AssignmentTurnedIn />, path: "/attendance" },
     { text: "Reports", icon: <BarChart />, path: "/reports" },
     { text: "Users", icon: <Group />, path: "/users" },
     { text: "Settings", icon: <Settings />, path: "/settings" },

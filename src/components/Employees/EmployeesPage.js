@@ -28,9 +28,9 @@ const EmployeesPage = () => {
       // Update existing employee
       employeeService.updateEmployee(employeeData).then((updatedEmployee) => {
         setEmployees((prevEmployees) =>
-          prevEmployees.map((emp) =>
-            emp.id === updatedEmployee.id ? updatedEmployee : emp
-          )
+            prevEmployees.map((emp) =>
+                emp.id === updatedEmployee.id ? updatedEmployee : emp
+            )
         );
       });
     } else {
@@ -65,39 +65,39 @@ const EmployeesPage = () => {
   };
 
   return (
-    <Card sx={{ margin: 4 }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Employees
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ marginBottom: 2, float: "right" }}
-          onClick={() => handleOpenModal(null)}
-        >
-          Add Employee
-        </Button>
-        <div style={{ clear: "both" }}></div>
-        <EmployeeTable
-          employees={employees}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
-          onEditEmployee={handleOpenModal}
-        />
-        {openModal && (
-          <EmployeeModal
-            open={openModal}
-            onClose={handleCloseModal}
-            employee={selectedEmployee}
-            onSaveEmployee={handleSaveEmployee}
-            isEditing={isEditing}
+      <Card sx={{ margin: 4 }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Employees
+          </Typography>
+          <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginBottom: 2, float: "right" }}
+              onClick={() => handleOpenModal(null)}
+          >
+            Add Employee
+          </Button>
+          <div style={{ clear: "both" }}></div>
+          <EmployeeTable
+              employees={employees}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+              onEditEmployee={handleOpenModal} // Pass the function to handle editing
           />
-        )}
-      </CardContent>
-    </Card>
+          {openModal && (
+              <EmployeeModal
+                  open={openModal}
+                  onClose={handleCloseModal}
+                  employee={selectedEmployee} // Pass selected employee
+                  onSaveEmployee={handleSaveEmployee}
+                  isEditing={isEditing} // Pass editing flag
+              />
+          )}
+        </CardContent>
+      </Card>
   );
 };
 
