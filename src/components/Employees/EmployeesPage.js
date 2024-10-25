@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Button } from "@mui/material";
+import { Card, CardContent, Typography, Button, TextField, Box } from "@mui/material";
 import EmployeeTable from "./EmployeeTable";
 import EmployeeModal from "./EmployeeModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
@@ -9,11 +9,13 @@ import departmentService from "../../services/DepartmentService";
 
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState([]);
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [filterText, setFilterText] = useState("");
   const [modalStates, setModalStates] = useState({
     employeeModal: false,
     viewModal: false,
-    deleteModal: false
+    deleteModal: false,
   });
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -28,66 +30,69 @@ const EmployeesPage = () => {
     try {
       const [employeesData, departmentsData] = await Promise.all([
         employeeService.fetchEmployees(),
-        departmentService.fetchDepartments()
+        departmentService.fetchDepartments(),
       ]);
       setEmployees(employeesData);
+      setFilteredEmployees(employeesData); // Initialize filtered employees with all employees
       setDepartments(departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
     }
   };
 
+  useEffect(() => {
+    const lowercasedFilter = filterText.toLowerCase();
+    const filteredData = employees.filter(
+        (employee) =>
+            employee.firstName.toLowerCase().includes(lowercasedFilter) ||
+            employee.lastName.toLowerCase().includes(lowercasedFilter) ||
+            employee.email.toLowerCase().includes(lowercasedFilter) ||
+            employee.position.toLowerCase().includes(lowercasedFilter) ||
+            employee.department?.departmentName.toLowerCase().includes(lowercasedFilter)
+    );
+    setFilteredEmployees(filteredData);
+  }, [filterText, employees]);
+
+  const handleFilterChange = (event) => {
+    setFilterText(event.target.value);
+  };
+
   const handleModalClose = (modalType) => {
-    console.log('Closing modal:', modalType); // Add logging
-    setModalStates(prev => ({
+    setModalStates((prev) => ({
       ...prev,
-      [modalType]: false
+      [modalType]: false,
     }));
-    if (modalType === 'employeeModal') {
+    if (modalType === "employeeModal") {
       setSelectedEmployee(null);
       setIsEditing(false);
     }
   };
 
-  const handleModalOpen = (modalType, employee = null, isEdit = false) => {
-    setModalStates({
-      employeeModal: false,
-      viewModal: false,
-      deleteModal: false,
-      [modalType]: true})
-    setModalStates(prev => ({ ...prev, [modalType]: true }));
-    setSelectedEmployee(employee);
-    setIsEditing(isEdit);
-  };
-
   const handleAddEmployee = () => {
-    console.log('Opening Add Employee Modal'); // Add logging
     setModalStates({
       employeeModal: true,
       viewModal: false,
-      deleteModal: false
+      deleteModal: false,
     });
     setSelectedEmployee(null);
     setIsEditing(false);
   };
 
   const handleEditEmployee = (employee) => {
-    console.log('Opening Edit Employee Modal', employee); // Add logging
     setModalStates({
       employeeModal: true,
       viewModal: false,
-      deleteModal: false
+      deleteModal: false,
     });
     setSelectedEmployee(employee);
     setIsEditing(true);
   };
 
   const handleViewEmployee = (employee) => {
-    console.log('Opening View Employee Modal', employee); // Add logging
     setModalStates({
       employeeModal: false,
       viewModal: true,
-      deleteModal: false
+      deleteModal: false,
     });
     setSelectedEmployee(employee);
   };
@@ -96,7 +101,7 @@ const EmployeesPage = () => {
     setModalStates({
       employeeModal: false,
       viewModal: false,
-      deleteModal: true
+      deleteModal: true,
     });
     setSelectedEmployee(employee);
   };
@@ -105,19 +110,16 @@ const EmployeesPage = () => {
     try {
       if (isEditing) {
         const updatedEmployee = await employeeService.updateEmployee(employeeData);
-        setEmployees(prevEmployees =>
-          prevEmployees.map(emp =>
-            emp.id === updatedEmployee.id ? updatedEmployee : emp
-          )
+        setEmployees((prevEmployees) =>
+            prevEmployees.map((emp) => (emp.id === updatedEmployee.id ? updatedEmployee : emp))
         );
       } else {
         const newEmployee = await employeeService.addEmployee(employeeData);
-        setEmployees(prevEmployees => [...prevEmployees, newEmployee]);
+        setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
       }
-      handleModalClose('employeeModal');
+      handleModalClose("employeeModal");
     } catch (error) {
       console.error("Error saving employee:", error);
-      // Here you might want to show an error message to the user
     }
   };
 
@@ -125,14 +127,11 @@ const EmployeesPage = () => {
     try {
       if (selectedEmployee) {
         await employeeService.deleteEmployee(selectedEmployee.id);
-        setEmployees(prevEmployees =>
-          prevEmployees.filter(emp => emp.id !== selectedEmployee.id)
-        );
-        handleModalClose('deleteModal');
+        setEmployees((prevEmployees) => prevEmployees.filter((emp) => emp.id !== selectedEmployee.id));
+        handleModalClose("deleteModal");
       }
     } catch (error) {
       console.error("Error deleting employee:", error);
-      // Here you might want to show an error message to the user
     }
   };
 
@@ -146,56 +145,79 @@ const EmployeesPage = () => {
   };
 
   return (
-    <Card sx={{ margin: 4 }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Employees
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ marginBottom: 2, float: "right" }}
-          onClick={handleAddEmployee}
-        >
-          Add Employee
-        </Button>
-        <div style={{ clear: "both" }}></div>
-        
-        <EmployeeTable
-          employees={employees}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
-          onViewEmployee={handleViewEmployee}
-          onEditEmployee={handleEditEmployee}
-          onDeleteEmployee={handleDeleteClick}
-        />
+      <Card sx={{ margin: 4 }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Employees
+          </Typography>
 
-       {/* Employee Modal for Add/Edit */}
-       <EmployeeModal
-          open={modalStates.employeeModal}
-          onClose={() => handleModalClose('employeeModal')}
-          employee={selectedEmployee}
-          onSaveEmployee={handleSaveEmployee}
-          isEditing={isEditing}
-          departments={departments}
-        />
+          <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            {/* Left-aligned Search Field */}
+            <TextField
+                label="Search employees..."
+                variant="outlined"
+                size="small" // Compact size
+                value={filterText}
+                onChange={handleFilterChange}
+                sx={{
+                  width: "20%", // Adjust to half of its current width
+                  "& .MuiInputBase-root": {
+                    height: 40, // Reduce height
+                  },
+                }}
+            />
 
-        <ViewEmployeeModal
-          open={modalStates.viewModal}
-          onClose={() => handleModalClose('viewModal')}
-          employee={selectedEmployee}
-        />
+            {/* Right-aligned Add Employee Button */}
+            <Button
+                variant="contained"
+                color="primary"
+                size="small" // Compact size
+                onClick={handleAddEmployee}
+                sx={{
+                  width: "15%", // Adjust to half of its current width
+                  padding: "6px 12px",
+                  height: 40, // Reduce height
+                }}
+            >
+              Add Employee
+            </Button>
+          </Box>
 
-        <DeleteConfirmationModal
-          open={modalStates.deleteModal}
-          onClose={() => handleModalClose('deleteModal')}
-          onConfirm={handleDeleteEmployee}
-          employee={selectedEmployee}
-        />
-      </CardContent>
-    </Card>
+          <EmployeeTable
+              employees={filteredEmployees}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+              onViewEmployee={handleViewEmployee}
+              onEditEmployee={handleEditEmployee}
+              onDeleteEmployee={handleDeleteClick}
+          />
+
+          {/* Modals */}
+          <EmployeeModal
+              open={modalStates.employeeModal}
+              onClose={() => handleModalClose("employeeModal")}
+              employee={selectedEmployee}
+              onSaveEmployee={handleSaveEmployee}
+              isEditing={isEditing}
+              departments={departments}
+          />
+
+          <ViewEmployeeModal
+              open={modalStates.viewModal}
+              onClose={() => handleModalClose("viewModal")}
+              employee={selectedEmployee}
+          />
+
+          <DeleteConfirmationModal
+              open={modalStates.deleteModal}
+              onClose={() => handleModalClose("deleteModal")}
+              onConfirm={handleDeleteEmployee}
+              employee={selectedEmployee}
+          />
+        </CardContent>
+      </Card>
   );
 };
 
