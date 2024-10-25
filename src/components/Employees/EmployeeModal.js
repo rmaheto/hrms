@@ -221,6 +221,7 @@ const EmployeeModal = ({
             <TextField
               label="Salary"
               name="salary"
+              type="number"
               fullWidth
               value={formData.salary}
               onChange={handleInputChange}
