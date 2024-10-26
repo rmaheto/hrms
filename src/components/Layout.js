@@ -1,5 +1,6 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import AuthSerice from '../services/AuthService'
 import {
   AppBar,
   Toolbar,
@@ -18,19 +19,23 @@ import {
   Settings,
   Logout,
   Group,
+  CorporateFare
 } from "@mui/icons-material";
 
 const Layout = () => {
   const menuItems = [
     { text: "Home", icon: <Home />, path: "/dashboard" },
     { text: "Employees", icon: <People />, path: "/employees" },
+    { text: "Departments", icon: <CorporateFare />, path: "/departments" },
     { text: "Reports", icon: <BarChart />, path: "/reports" },
     { text: "Users", icon: <Group />, path: "/users" },
     { text: "Settings", icon: <Settings />, path: "/settings" },
   ];
-
+const navigate = useNavigate();
   const handleLogout = () => {
-    // Handle logout
+    AuthSerice.removeToken();
+    navigate("/")
+
   };
 
   return (

@@ -124,6 +124,7 @@ const EmployeesPage = () => {
   const handleDeleteEmployee = async () => {
     try {
       if (selectedEmployee) {
+        
         await employeeService.deleteEmployee(selectedEmployee.id);
         setEmployees(prevEmployees =>
           prevEmployees.filter(emp => emp.id !== selectedEmployee.id)

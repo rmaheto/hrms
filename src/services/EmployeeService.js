@@ -24,6 +24,22 @@ const fetchEmployeeById = async (employeeId) => {
   }
 };
 
+// Delete employee by ID
+const deleteEmployee = async (employeeId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
+      Method:"DELETE",
+      headers: getHeaders(),
+    });
+    if (!response.ok) throw new Error("Failed to delete employee");
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    throw error;
+  }
+};
+
+
 // Fetch all employees with optional pagination params
 const fetchEmployees = async (page = 0, size = 10) => {
   try {
@@ -75,4 +91,5 @@ export default {
   updateEmployee,
   addEmployee,
   fetchEmployeeById,
+  deleteEmployee
 };

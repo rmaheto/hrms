@@ -64,7 +64,7 @@ const Dashboard = () => {
         <Toolbar sx={{ justifyContent: "flex-end" }}>
           <Box display="flex" alignItems="center">
             <Avatar
-              alt={getInitials(user.username)}
+              alt={getInitials(user?.username)}
               src={user.profilePicture}
             />
             <Button

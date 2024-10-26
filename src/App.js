@@ -12,6 +12,7 @@ import Layout from "./components/Layout";
 import Login from "./components/login/Login.js";
 import authService from "./services/AuthService";
 import AttendancePage from "./components/Attendance/AttendancePage";
+import DepartmentPage from "./components/Department/DepartmentPage.js";
 
 const App = () => {
   const isAuthenticated = authService.isLoggedIn();
@@ -28,7 +29,8 @@ const App = () => {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<UserList />} />
           <Route path="employees" element={<EmployeesPage />} />
-          <Route path="attendance" element={<AttendancePage />} />
+          <Route path="departments" element={<DepartmentPage />} />
+          <Route path="reports" element={<AttendancePage />} />
         </Route>
         <Route path="/login" element={<Login />} />{" "}
         {/* Define the Login route */}
