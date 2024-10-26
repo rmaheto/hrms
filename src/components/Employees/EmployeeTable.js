@@ -25,13 +25,11 @@ const EmployeeTable = ({
 }) => {
   const handleEditClick = (event, employee) => {
     event.stopPropagation();
-    console.log('Edit button clicked for employee:', employee); // Add logging
     onEditEmployee(employee);
   };
 
   const handleViewClick = (event, employee) => {
     event.stopPropagation();
-    console.log('View button clicked for employee:', employee); // Add logging
     onViewEmployee(employee);
   };
 
