@@ -3,7 +3,7 @@ import { Card, CardContent, Typography, Button, TextField, Box } from "@mui/mate
 import EmployeeTable from "./EmployeeTable";
 import EmployeeModal from "./EmployeeModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import DeleteConfirmationModal from "../GlobalComponents/DeleteConfirmationModal";
 import employeeService from "../../services/EmployeeService";
 import departmentService from "../../services/DepartmentService";
 
@@ -33,7 +33,7 @@ const EmployeesPage = () => {
         departmentService.fetchDepartments(),
       ]);
       setEmployees(employeesData);
-      setFilteredEmployees(employeesData); // Initialize filtered employees with all employees
+      setFilteredEmployees(employeesData);
       setDepartments(departmentsData);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -160,9 +160,9 @@ const EmployeesPage = () => {
                 value={filterText}
                 onChange={handleFilterChange}
                 sx={{
-                  width: "20%", // Adjust to half of its current width
+                  width: "20%",
                   "& .MuiInputBase-root": {
-                    height: 40, // Reduce height
+                    height: 40,
                   },
                 }}
             />
@@ -171,12 +171,12 @@ const EmployeesPage = () => {
             <Button
                 variant="contained"
                 color="primary"
-                size="small" // Compact size
+                size="small"
                 onClick={handleAddEmployee}
                 sx={{
-                  width: "15%", // Adjust to half of its current width
+                  width: "15%",
                   padding: "6px 12px",
-                  height: 40, // Reduce height
+                  height: 40,
                 }}
             >
               Add Employee
@@ -214,7 +214,9 @@ const EmployeesPage = () => {
               open={modalStates.deleteModal}
               onClose={() => handleModalClose("deleteModal")}
               onConfirm={handleDeleteEmployee}
-              employee={selectedEmployee}
+              entity={selectedEmployee}
+              entityName="employee"
+              getDisplayText={(employee) => `${employee.firstName} ${employee.lastName}, `}
           />
         </CardContent>
       </Card>

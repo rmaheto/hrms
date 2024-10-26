@@ -18,7 +18,7 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600, // Adjusted width for a two-column layout
+  width: 600,
   bgcolor: "background.paper",
   borderRadius: "8px",
   boxShadow: 24,
@@ -26,16 +26,16 @@ const modalStyle = {
 };
 
 const compactFieldStyle = {
-  marginBottom: 1, // Reduced margin for compact look
+  marginBottom: 1,
   "& .MuiInputBase-root": {
-    height: 40, // Reduce the input field height
+    height: 40,
   },
   "& .MuiInputLabel-root": {
-    fontSize: 14, // Smaller label font size
+    fontSize: 14,
   },
   "& .MuiInputBase-input": {
-    fontSize: 14, // Smaller input font size
-    padding: "8px", // Compact padding
+    fontSize: 14,
+    padding: "8px",
   },
 };
 
@@ -63,10 +63,8 @@ const EmployeeModal = ({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Fetch departments for the dropdown
     DepartmentService.fetchDepartments().then(setDepartments);
 
-    // Pre-fill form when editing
     if (isEditing && employee) {
       setFormData({
         firstName: employee.firstName,
@@ -81,7 +79,6 @@ const EmployeeModal = ({
         hireDate: employee.hireDate,
       });
     } else {
-      // Reset form when adding a new employee
       setFormData({
         firstName: "",
         lastName: "",
@@ -97,31 +94,22 @@ const EmployeeModal = ({
     }
   }, [isEditing, employee]);
 
-  // Function to format phone number as xxx-xxx-xxxx
   const formatPhoneNumber = (value) => {
     const cleaned = value.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-      return `${match[1]}-${match[2]}-${match[3]}`;
-    }
-    return value;
+    return match ? `${match[1]}-${match[2]}-${match[3]}` : value;
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    let formattedValue = value;
-    if (name === "phone") {
-      formattedValue = formatPhoneNumber(value); // Apply formatting for phone number
-    }
-
-    setFormData({ ...formData, [name]: formattedValue });
+    setFormData({
+      ...formData,
+      [name]: name === "phone" ? formatPhoneNumber(value) : value,
+    });
   };
 
   const handleSave = () => {
-    // Perform validation before saving
     const newErrors = {};
-
     if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
@@ -130,158 +118,153 @@ const EmployeeModal = ({
     }
 
     if (Object.keys(newErrors).length === 0) {
-      // No errors, call onSaveEmployee
       onSaveEmployee({ ...formData, id: isEditing ? employee.id : undefined });
     } else {
-      setErrors(newErrors); // Set validation errors
+      setErrors(newErrors);
     }
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box sx={modalStyle}>
-        <Typography variant="h6" gutterBottom>
-          {isEditing ? "Edit Employee" : "Add New Employee"}
-        </Typography>
+      <Modal open={open} onClose={onClose}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" gutterBottom>
+            {isEditing ? "Edit Employee" : "Add New Employee"}
+          </Typography>
 
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <TextField
-              label="First Name"
-              name="firstName"
-              fullWidth
-              value={formData.firstName}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Last Name"
-              name="lastName"
-              fullWidth
-              value={formData.lastName}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-            />
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <TextField
+                  label="First Name"
+                  name="firstName"
+                  fullWidth
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                  label="Last Name"
+                  name="lastName"
+                  fullWidth
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                  label="Email"
+                  name="email"
+                  fullWidth
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
+                  sx={compactFieldStyle}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                  label="Phone"
+                  name="phone"
+                  fullWidth
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  error={!!errors.phone}
+                  helperText={errors.phone}
+                  sx={compactFieldStyle}
+                  placeholder="xxx-xxx-xxxx"
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                  label="Date of Birth"
+                  name="dateOfBirth"
+                  fullWidth
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                  label="Place of Birth"
+                  name="placeOfBirth"
+                  fullWidth
+                  value={formData.placeOfBirth}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                  label="Salary"
+                  name="salary"
+                  type="number"
+                  fullWidth
+                  value={formData.salary}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                  label="Hire Date"
+                  name="hireDate"
+                  fullWidth
+                  type="date"
+                  value={formData.hireDate}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <TextField
+                  label="Position"
+                  name="position"
+                  fullWidth
+                  value={formData.position}
+                  onChange={handleInputChange}
+                  sx={compactFieldStyle}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <FormControl fullWidth sx={compactFieldStyle}>
+                <InputLabel>Department</InputLabel>
+                <Select
+                    name="departmentId"
+                    value={formData.departmentId}
+                    onChange={handleInputChange}
+                >
+                  {departments.map((department) => (
+                      <MenuItem key={department.id} value={department.id}>
+                        {department.departmentName}
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
 
-          <Grid item xs={6}>
-            <TextField
-              label="Email"
-              name="email"
-              fullWidth
-              value={formData.email}
-              onChange={handleInputChange}
-              error={!!errors.email}
-              helperText={errors.email}
-              sx={compactFieldStyle} // Apply compact style
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Phone"
-              name="phone"
-              fullWidth
-              value={formData.phone}
-              onChange={handleInputChange}
-              error={!!errors.phone}
-              helperText={errors.phone}
-              sx={compactFieldStyle} // Apply compact style
-              placeholder="xxx-xxx-xxxx"
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              label="Date of Birth"
-              name="dateOfBirth"
-              fullWidth
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Place of Birth"
-              name="placeOfBirth"
-              fullWidth
-              value={formData.placeOfBirth}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              label="Salary"
-              name="salary"
-              type="number"
-              fullWidth
-              value={formData.salary}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Hire Date"
-              name="hireDate"
-              fullWidth
-              type="date"
-              value={formData.hireDate}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-
-          {/* Position and Department in the same row */}
-          <Grid item xs={6}>
-            <TextField
-              label="Position"
-              name="position"
-              fullWidth
-              value={formData.position}
-              onChange={handleInputChange}
-              sx={compactFieldStyle} // Apply compact style
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl fullWidth sx={compactFieldStyle}>
-              <InputLabel>Department</InputLabel>
-              <Select
-                name="departmentId"
-                value={formData.departmentId}
-                onChange={handleInputChange}
-              >
-                {departments.map((department) => (
-                  <MenuItem key={department.id} value={department.id}>
-                    {department.departmentName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSave}
-          sx={{ marginTop: 2 }}
-        >
-          {isEditing ? "Save Changes" : "Add Employee"}
-        </Button>
-      </Box>
-    </Modal>
+          <Box display="flex" justifyContent="flex-end" sx={{ mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleSave}>
+              {isEditing ? "Save Changes" : "Add Employee"}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
   );
 };
 

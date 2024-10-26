@@ -8,9 +8,10 @@ import {
   TableRow,
   Paper,
   IconButton,
-  TablePagination, // Import TablePagination
+  TablePagination,
 } from "@mui/material";
-import { Edit as EditIcon, VpnKey as KeyIcon } from "@mui/icons-material";
+import { LockReset as KeyIcon } from "@mui/icons-material";
+import { Edit as EditIcon} from "lucide-react";
 
 const UserTable = ({
   users = [],
@@ -40,7 +41,7 @@ const UserTable = ({
           <TableBody>
             {users.length > 0 ? (
                 users
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Paginate the users array
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((user) => (
                     <TableRow key={user.id}>
                       <TableCell>{user.id}</TableCell>
@@ -74,12 +75,12 @@ const UserTable = ({
         {/* Add pagination component */}
         <TablePagination
             component="div"
-            count={users.length} // Total number of users
-            page={page} // Current page
-            onPageChange={onPageChange} // Function to handle page change
-            rowsPerPage={rowsPerPage} // Number of rows per page
-            onRowsPerPageChange={onRowsPerPageChange} // Function to handle rows per page change
-            rowsPerPageOptions={[5, 10, 25]} // Rows per page options
+            count={users.length}
+            page={page}
+            onPageChange={onPageChange}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={onRowsPerPageChange}
+            rowsPerPageOptions={[5, 10, 25]}
         />
       </TableContainer>
   );
