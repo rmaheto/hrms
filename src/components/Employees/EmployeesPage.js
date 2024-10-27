@@ -121,14 +121,17 @@ const EmployeesPage = () => {
     }
   };
 
-  const handleDeleteEmployee = async () => {
+  const handleDeleteEmployee =  () => {
     try {
       if (selectedEmployee) {
+        try{
+            employeeService.deleteEmployee(selectedEmployee.id);
+            
+        }catch(error){
+            console.log(error)
+        }
         
-        await employeeService.deleteEmployee(selectedEmployee.id);
-        setEmployees(prevEmployees =>
-          prevEmployees.filter(emp => emp.id !== selectedEmployee.id)
-        );
+        setEmployees(prevEmployees => prevEmployees.filter(emp => emp.id !== selectedEmployee.id));
         handleModalClose('deleteModal');
       }
     } catch (error) {

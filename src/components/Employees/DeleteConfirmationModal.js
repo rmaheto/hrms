@@ -16,8 +16,8 @@ const DeleteConfirmationModal = ({ open, onClose, onConfirm, employee }) => {
       <DialogTitle>Confirm Deletion</DialogTitle>
       <DialogContent>
         <Typography>
-          Are you sure you want to delete employee {employee.firstName}{" "}
-          {employee.lastName}? This action cannot be undone.
+          Are you sure you want to delete employee<b> {employee.firstName}{" "}
+          {employee.lastName}</b>? <br></br>This action cannot be undone.
         </Typography>
       </DialogContent>
       <DialogActions>

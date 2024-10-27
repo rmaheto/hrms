@@ -65,7 +65,7 @@ const Dashboard = () => {
           <Box display="flex" alignItems="center">
             <Avatar
               alt={getInitials(user?.username)}
-              src={user.profilePicture}
+              src={user?.profilePicture}
             />
             <Button
               variant="contained"

@@ -28,11 +28,11 @@ const fetchEmployeeById = async (employeeId) => {
 const deleteEmployee = async (employeeId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
-      Method:"DELETE",
+      method:"DELETE",
       headers: getHeaders(),
     });
     if (!response.ok) throw new Error("Failed to delete employee");
-    return await response.json();
+    
   } catch (error) {
     console.error("Error deleting employee:", error);
     throw error;
