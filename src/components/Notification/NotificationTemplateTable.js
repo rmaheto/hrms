@@ -24,6 +24,19 @@ const NotificationTemplateTable = ({
   onEditTemplate,
   onDeleteTemplate,
 }) => {
+
+  const handleViewClick = (event, template) => {
+    event.stopPropagation();
+    onViewTemplate(template);
+  };
+  const handleEditClick = (event, template) => {
+    event.stopPropagation();
+    onEditTemplate(template);
+  };
+  const handleDeleteClick = (event, template) => {
+    event.stopPropagation();
+    onDeleteTemplate(template);
+  };
   return (
       <TableContainer component={Paper}>
         <Table>
@@ -50,7 +63,7 @@ const NotificationTemplateTable = ({
                         <Tooltip title="View">
                           <IconButton
                               color="primary"
-                              onClick={(e) => onViewTemplate(template)}
+                              onClick={(e) => handleViewClick(e, template)}
                           >
                             <Eye size={20} />
                           </IconButton>
@@ -58,13 +71,13 @@ const NotificationTemplateTable = ({
                         <Tooltip title="Edit">
                           <IconButton
                               color="primary"
-                              onClick={() => onEditTemplate(template)}
+                              onClick={(e) => handleEditClick(e, template)}
                           >
                             <Edit size={20} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton color="error" onClick={() => onDeleteTemplate(template)}>
+                          <IconButton color="error" onClick={(e) => handleDeleteClick(e, template)}>
                             <Delete />
                           </IconButton>
                         </Tooltip>

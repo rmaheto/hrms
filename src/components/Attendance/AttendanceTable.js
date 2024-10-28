@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 const AttendanceTable = ({
-  data, // data passed from parent component
+  data,
   page,
   rowsPerPage,
   onPageChange,
@@ -57,12 +57,12 @@ const AttendanceTable = ({
       {/* Add TablePagination here */}
       <TablePagination
         component="div"
-        count={data.length} // Total number of rows
+        count={data.length}
         page={page}
         onPageChange={onPageChange}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={onRowsPerPageChange}
-        rowsPerPageOptions={[5, 10, 25]} // You can customize options
+        rowsPerPageOptions={[5, 10, 25]}
       />
     </TableContainer>
   );

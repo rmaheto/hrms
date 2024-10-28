@@ -8,7 +8,7 @@ import {
   TextField,
   Alert,
 } from "@mui/material";
-import UserService from "../../services/UserService"; // Import your service
+import UserService from "../../services/UserService";
 
 const PasswordUpdateModal = ({ open, onClose, user }) => {
   const [oldPassword, setOldPassword] = useState("");
@@ -22,14 +22,13 @@ const PasswordUpdateModal = ({ open, onClose, user }) => {
       return;
     }
     try {
-      // Call the PATCH endpoint to update password
       await UserService.updateUserPassword(user.id, {
         oldPassword,
         newPassword,
         confirmPassword,
       });
-      setPasswordError(""); // Clear any previous errors
-      onClose(); // Close the modal after success
+      setPasswordError("");
+      onClose();
     } catch (error) {
       setPasswordError("Failed to update password.");
       console.error(error);

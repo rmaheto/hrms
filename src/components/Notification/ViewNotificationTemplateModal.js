@@ -41,7 +41,7 @@ const ViewNotificationTemplateModal = ({ open, onClose, template }) => {
                 <Typography variant="subtitle2" color="text.secondary">
                   Message Type
                 </Typography>
-                <Typography variant="body1">{template.messageType}</Typography>
+                <Typography variant="body1">{template.type}</Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="subtitle2" color="text.secondary">
@@ -56,9 +56,9 @@ const ViewNotificationTemplateModal = ({ open, onClose, template }) => {
                 <Typography
                     variant="body1"
                     sx={{
-                      whiteSpace: "pre-line", // Preserve line breaks
-                      maxHeight: 200, // Optional: limit height if the body content is long
-                      overflowY: "auto", // Scroll if content overflows
+                      whiteSpace: "pre-line",
+                      maxHeight: 200,
+                      overflowY: "auto",
                     }}
                 >
                   {template.body}
