@@ -23,7 +23,7 @@ import {
   ExpandLess,
   ExpandMore,
 } from "@mui/icons-material";
-import { HelpOutline, Notifications, Search } from "@mui/icons-material";
+import { HelpOutline, Notifications, Search, BusinessCenter } from "@mui/icons-material";
 import { useNavigate, Outlet } from "react-router-dom";
 import authService from "../../services/AuthService";
 import ProfileMenu from "./ProfileMenu";
@@ -66,6 +66,7 @@ const Layout = () => {
       text: "Setup",
       icon: <Settings />,
       subMenu: [
+        { text: "Departments", icon: <BusinessCenter />, path: "/departments" },
         { text: "Message Templates", icon: <Message />, path: "/notifications/templates" },
         { text: "Users", icon: <Group />, path: "/users" }
       ],

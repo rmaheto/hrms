@@ -12,6 +12,7 @@ import Layout from "./components/GlobalComponents/Layout";
 import Login from "./components/Login/Login";
 import AttendancePage from "./components/Attendance/AttendancePage";
 import NotificationTemplatesPage from "./components/Notification/NotificationTemplatesPage";
+import DepartmentPage from "./components/Department/DepartmentPage";
 import authService from "./services/AuthService";
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
             <Route path="users" element={<UserList />} />
             <Route path="employees" element={<EmployeesPage />} />
             <Route path="attendance" element={<AttendancePage />} />
+            <Route path="departments" element={<DepartmentPage />} />
             <Route path="notifications/templates" element={<NotificationTemplatesPage />} />
           </Route>
 
