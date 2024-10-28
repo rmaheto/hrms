@@ -13,9 +13,8 @@ import userService from "../../services/UserService";
 
 const RoleFilter = ({ roleFilters, onRoleFilterChange }) => {
   const [availableRoles, setAvailableRoles] = useState([]);
-  const [selectedRoles, setSelectedRoles] = useState([]); // Array of selected roles
-
-  // Fetch roles on component mount
+  const [selectedRoles, setSelectedRoles] = useState([]);
+  
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -28,13 +27,12 @@ const RoleFilter = ({ roleFilters, onRoleFilterChange }) => {
     };
     fetchRoles();
   }, []);
-
-  // Handle changes in role selection
+  
   const handleSelectChange = (event) => {
-    const { value } = event.target; // Get the array of selected roles
-    setSelectedRoles(value); // Update local state
+    const { value } = event.target;
+    setSelectedRoles(value);
 
-    onRoleFilterChange(value); // Pass the selected roles array directly to parent
+    onRoleFilterChange(value);
   };
 
   return (
@@ -50,9 +48,9 @@ const RoleFilter = ({ roleFilters, onRoleFilterChange }) => {
           <InputLabel>Filter by Role</InputLabel>
           <Select
             multiple
-            value={selectedRoles} // Bind the selected roles
+            value={selectedRoles}
             onChange={handleSelectChange}
-            renderValue={(selected) => selected.join(", ")} // Show selected roles
+            renderValue={(selected) => selected.join(", ")}
             label="Filter by Role"
             sx={{ width: 250, height: 36 }}
           >

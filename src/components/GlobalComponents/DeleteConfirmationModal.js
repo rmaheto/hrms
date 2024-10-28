@@ -1,5 +1,12 @@
 import React from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from "@mui/material";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography
+} from "@mui/material";
 
 const DeleteConfirmationModal = ({
   open,
@@ -10,6 +17,12 @@ const DeleteConfirmationModal = ({
   getDisplayText = () => ""
 }) => {
   if (!entity) return null;
+
+  // Define a handler to wrap the delete action
+  const handleDelete = async () => {
+    await onConfirm(); // Wait for delete action to complete
+    onClose(); // Close the modal
+  };
 
   return (
       <Dialog open={open} onClose={onClose}>
@@ -22,7 +35,7 @@ const DeleteConfirmationModal = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={onConfirm} color="error" variant="contained">
+          <Button onClick={handleDelete} color="error" variant="contained">
             Delete
           </Button>
         </DialogActions>

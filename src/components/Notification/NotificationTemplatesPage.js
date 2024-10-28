@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Button, TextField } from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Card, CardContent, Typography, Button, TextField} from "@mui/material";
 import NotificationTemplateTable from "./NotificationTemplateTable";
 import NotificationTemplateModal from "./NotificationTemplateModal";
 import ViewNotificationTemplateModal from "./ViewNotificationTemplateModal";
+import DeleteConfirmationModal
+  from "../GlobalComponents/DeleteConfirmationModal"
 import notificationService from "../../services/NotificationService";
 
 const NotificationTemplatesPage = () => {
   const [templates, setTemplates] = useState([]);
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [modalStates, setModalStates] = useState({
+    addOrEditTemplateModal: false,
+    viewTemplateModal: false,
+    deleteTemplateModal: false,
+  });
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [page, setPage] = useState(0);
@@ -38,32 +43,53 @@ const NotificationTemplatesPage = () => {
     setFilteredTemplates(filtered);
   };
 
-  const handleModalClose = () => {
-    setModalOpen(false);
-    setSelectedTemplate(null);
-    setIsEditing(false);
-  };
-
-  const handleViewModalClose = () => {
-    setViewModalOpen(false);
-    setSelectedTemplate(null);
-  };
-
   const handleAddTemplate = () => {
     setIsEditing(false);
     setSelectedTemplate(null);
-    setModalOpen(true);
+    setModalStates({
+      addOrEditTemplateModal: true,
+      viewTemplateModal: false,
+      deleteTemplateModal: false,
+    });
   };
 
   const handleEditTemplate = (template) => {
     setIsEditing(true);
     setSelectedTemplate(template);
-    setModalOpen(true);
+    setModalStates({
+      addOrEditTemplateModal: true,
+      viewTemplateModal: false,
+      deleteTemplateModal: false,
+    });
   };
 
   const handleViewTemplate = (template) => {
     setSelectedTemplate(template);
-    setViewModalOpen(true);
+    setModalStates({
+      addOrEditTemplateModal: false,
+      viewTemplateModal: true,
+      deleteTemplateModal: false,
+    });
+  };
+
+  const handleDeleteTemplate = (template) => {
+    setSelectedTemplate(template);
+    setModalStates({
+      addOrEditTemplateModal: false,
+      viewTemplateModal: false,
+      deleteTemplateModal: true,
+    });
+  };
+
+  const handleModalClose = (modalType) => {
+    setModalStates((prev) => ({
+      ...prev,
+      [modalType]: false,
+    }));
+    if (modalType === "addOrEditTemplateModal") {
+      setSelectedTemplate(null);
+      setIsEditing(false);
+    }
   };
 
   const handleSaveTemplate = async (templateData) => {
@@ -90,21 +116,26 @@ const NotificationTemplatesPage = () => {
   };
 
   return (
-      <Card sx={{ margin: 4 }}>
+      <Card sx={{margin: 4}}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
             Notification Templates
           </Typography>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "20px"
+          }}>
             <TextField
                 size="small"
                 label="Search templates..."
                 variant="outlined"
                 value={searchQuery}
                 onChange={handleSearch}
-                style={{ width: "40%" }}
+                style={{width: "40%"}}
             />
-            <Button variant="contained" color="primary" onClick={handleAddTemplate}>
+            <Button variant="contained" color="primary"
+                    onClick={handleAddTemplate}>
               Add Template
             </Button>
           </div>
@@ -117,29 +148,32 @@ const NotificationTemplatesPage = () => {
               onRowsPerPageChange={handleRowsPerPageChange}
               onViewTemplate={handleViewTemplate}
               onEditTemplate={handleEditTemplate}
-              onDeleteTemplate={(template) => console.log("Delete template", template)} // Placeholder
+              onDeleteTemplate={handleDeleteTemplate}
           />
         </CardContent>
 
-        {/* Add/Edit Modal */}
-        {modalOpen && (
-            <NotificationTemplateModal
-                open={modalOpen}
-                onClose={handleModalClose}
-                onSave={handleSaveTemplate}
-                isEditing={isEditing}
-                template={selectedTemplate}
-            />
-        )}
+        <NotificationTemplateModal
+            open={modalStates.addOrEditTemplateModal}
+            onClose={() => handleModalClose("addOrEditTemplateModal")}
+            onSave={handleSaveTemplate}
+            isEditing={isEditing}
+            template={selectedTemplate}
+        />
 
-        {/* View Modal */}
-        {viewModalOpen && (
-            <ViewNotificationTemplateModal
-                open={viewModalOpen}
-                onClose={handleViewModalClose}
-                template={selectedTemplate}
-            />
-        )}
+        <ViewNotificationTemplateModal
+            template={selectedTemplate}
+            open={modalStates.viewTemplateModal}
+            onClose={() => handleModalClose("viewTemplateModal")}
+        />
+
+        <DeleteConfirmationModal
+            open={modalStates.deleteTemplateModal}
+            onClose={() => handleModalClose("deleteTemplateModal")}
+            onConfirm={handleDeleteTemplate}
+            entity={selectedTemplate}
+            entityName="notification message "
+            getDisplayText={(template) => `${template.name} , `}
+        />
       </Card>
   );
 };

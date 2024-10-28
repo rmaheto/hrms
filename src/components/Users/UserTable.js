@@ -7,11 +7,12 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
   TablePagination,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { LockReset as KeyIcon } from "@mui/icons-material";
-import { Edit as EditIcon} from "lucide-react";
+import { Edit as EditIcon } from "lucide-react";
 
 const UserTable = ({
   users = [],
@@ -35,7 +36,7 @@ const UserTable = ({
               <TableCell sx={{ fontWeight: "bold" }}>ID</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Username</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Roles</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -49,15 +50,24 @@ const UserTable = ({
                       <TableCell>
                         {user.roles ? user.roles.join(", ") : "No roles"}
                       </TableCell>
-                      <TableCell>
-                        <IconButton onClick={() => onEditUser(user)}>
-                          <EditIcon />
-                        </IconButton>
-                        {/* Password Update Icon */}
+                      <TableCell align="center">
+                        <Tooltip title="Edit User">
+                          <IconButton
+                              color="primary"
+                              onClick={() => onEditUser(user)}
+                          >
+                            <EditIcon size={20} />
+                          </IconButton>
+                        </Tooltip>
                         {canUpdatePassword(user) && (
-                            <IconButton onClick={() => onUpdatePassword(user)}>
-                              <KeyIcon />
-                            </IconButton>
+                            <Tooltip title="Change Password">
+                              <IconButton
+                                  color="primary"
+                                  onClick={() => onUpdatePassword(user)}
+                              >
+                                <KeyIcon />
+                              </IconButton>
+                            </Tooltip>
                         )}
                       </TableCell>
                     </TableRow>
@@ -72,7 +82,7 @@ const UserTable = ({
           </TableBody>
         </Table>
 
-        {/* Add pagination component */}
+        {/* Pagination Component */}
         <TablePagination
             component="div"
             count={users.length}

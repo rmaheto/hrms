@@ -43,20 +43,17 @@ const AttendancePage = () => {
       alert("Please fill in all fields");
       return;
     }
-
-    // Fetch attendance data
+    
     const data = await attendanceService.fetchAttendance(
       employeeId,
       startDate,
       endDate
     );
     setAttendanceData(data);
-
-    // Fetch employee details
+    
     const employeeDetails = await employeeService.fetchEmployeeById(employeeId);
     setEmployee(employeeDetails);
-
-    // Calculate total hours worked and overtime
+    
     const totalHours = data.reduce(
       (sum, entry) => sum + (entry.hoursWorked || 0),
       0
@@ -69,16 +66,14 @@ const AttendancePage = () => {
     setTotalHoursWorked(totalHours.toFixed(2));
     setTotalOvertime(totalOvertime.toFixed(2));
   };
-
-  // Handle page change
+  
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
-
-  // Handle rows per page change
+  
   const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); // Convert to number
-    setPage(0); // Reset to first page
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (

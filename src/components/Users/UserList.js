@@ -24,25 +24,23 @@ const UserList = () => {
   });
 
   // Pagination state
-  const [page, setPage] = useState(0); // Current page
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     UserService.fetchUsers().then((response) => {
       setUsers(response);
-      setFilteredUsers(response); // Initialize filtered users as all users
+      setFilteredUsers(response);
     });
   }, []);
-
-  // Handle page change
+  
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
-  // Handle rows per page change
   const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10)); // Convert value to number
-    setPage(0); // Reset to first page when rows per page changes
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   useEffect(() => {
@@ -132,10 +130,10 @@ const UserList = () => {
               onEditUser={handleEditUser}
               onUpdatePassword={handleOpenPasswordModal}
               loggedInUser={loggedInUser}
-              page={page} // Pass page state
-              rowsPerPage={rowsPerPage} // Pass rows per page state
-              onPageChange={handlePageChange} // Handle page change
-              onRowsPerPageChange={handleRowsPerPageChange} // Handle rows per page change
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
           />
           <UserModal
               key={isEditing ? selectedUser.id : "add"}

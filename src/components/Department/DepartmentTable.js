@@ -14,56 +14,60 @@ import {
 import { Delete, Visibility } from "@mui/icons-material";
 import { Eye, Edit } from "lucide-react";
 
-const NotificationTemplateTable = ({
-  templates,
+const DepartmentTable = ({
+  departments,
   page,
   rowsPerPage,
   onPageChange,
   onRowsPerPageChange,
-  onViewTemplate,
-  onEditTemplate,
-  onDeleteTemplate,
+  onViewDepartment,
+  onEditDepartment,
+  onDeleteDepartment,
 }) => {
+  const handleViewClick = (event, department) => {
+    event.stopPropagation();
+    onViewDepartment(department);
+  };
 
-  const handleViewClick = (event, template) => {
+  const handleEditClick = (event, department) => {
     event.stopPropagation();
-    onViewTemplate(template);
+    onEditDepartment(department);
   };
-  const handleEditClick = (event, template) => {
+
+  const handleDeleteClick = (event, department) => {
     event.stopPropagation();
-    onEditTemplate(template);
+    onDeleteDepartment(department);
   };
-  const handleDeleteClick = (event, template) => {
-    event.stopPropagation();
-    onDeleteTemplate(template);
-  };
+
   return (
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Message Type</TableCell>
-              <TableCell>Subject</TableCell>
+              <TableCell>Department Name</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Code</TableCell>
+              <TableCell>Location</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {templates.length > 0 ? (
-                templates
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Paginate the templates
-                .map((template) => (
-                    <TableRow key={template.id}>
-                      <TableCell>{template.id}</TableCell>
-                      <TableCell>{template.name}</TableCell>
-                      <TableCell>{template.type}</TableCell>
-                      <TableCell>{template.subject}</TableCell>
+            {departments.length > 0 ? (
+                departments
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((department) => (
+                    <TableRow key={department.id}>
+                      <TableCell>{department.id}</TableCell>
+                      <TableCell>{department.departmentName}</TableCell>
+                      <TableCell>{department.departmentDescription}</TableCell>
+                      <TableCell>{department.departmentCode}</TableCell>
+                      <TableCell>{department.location}</TableCell>
                       <TableCell>
                         <Tooltip title="View">
                           <IconButton
                               color="primary"
-                              onClick={(e) => handleViewClick(e, template)}
+                              onClick={(e) => handleViewClick(e, department)}
                           >
                             <Eye size={20} />
                           </IconButton>
@@ -71,13 +75,13 @@ const NotificationTemplateTable = ({
                         <Tooltip title="Edit">
                           <IconButton
                               color="primary"
-                              onClick={(e) => handleEditClick(e, template)}
+                              onClick={(e) => handleEditClick(e, department)}
                           >
                             <Edit size={20} />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete">
-                          <IconButton color="error" onClick={(e) => handleDeleteClick(e, template)}>
+                          <IconButton color="error" onClick={(e) => handleDeleteClick(e, department)}>
                             <Delete />
                           </IconButton>
                         </Tooltip>
@@ -86,18 +90,17 @@ const NotificationTemplateTable = ({
                 ))
             ) : (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    No templates found.
+                  <TableCell colSpan={6} align="center">
+                    No departments found.
                   </TableCell>
                 </TableRow>
             )}
           </TableBody>
         </Table>
 
-        {/* TablePagination component */}
         <TablePagination
             component="div"
-            count={templates.length}
+            count={departments.length}
             page={page}
             onPageChange={onPageChange}
             rowsPerPage={rowsPerPage}
@@ -107,4 +110,4 @@ const NotificationTemplateTable = ({
   );
 };
 
-export default NotificationTemplateTable;
+export default DepartmentTable;
