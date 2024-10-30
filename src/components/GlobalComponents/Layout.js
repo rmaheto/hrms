@@ -22,6 +22,7 @@ import {
   Message,
   ExpandLess,
   ExpandMore,
+  Redeem,
 } from "@mui/icons-material";
 import { HelpOutline, Notifications, Search, BusinessCenter } from "@mui/icons-material";
 import { useNavigate, Outlet } from "react-router-dom";
@@ -68,7 +69,8 @@ const Layout = () => {
       subMenu: [
         { text: "Departments", icon: <BusinessCenter />, path: "/departments" },
         { text: "Message Templates", icon: <Message />, path: "/notifications/templates" },
-        { text: "Users", icon: <Group />, path: "/users" }
+        { text: "Users", icon: <Group />, path: "/users" },
+        { text: "Benefits Plan", icon: <Redeem />, path: "/benefit-plans" }
       ],
     },
   ];
