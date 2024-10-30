@@ -95,13 +95,11 @@ const ViewEmployeeModal = ({ open, onClose, employee }) => {
             </Grid>
           </Grid>
         </Paper>
-        <Button
-          variant="contained"
-          onClick={onClose}
-          sx={{ marginTop: 2 }}
-        >
-          Close
-        </Button>
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2 }}>
+          <Button variant="contained" onClick={onClose}>
+            Close
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

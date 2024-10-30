@@ -13,6 +13,7 @@ import Login from "./components/Login/Login";
 import AttendancePage from "./components/Attendance/AttendancePage";
 import NotificationTemplatesPage from "./components/Notification/NotificationTemplatesPage";
 import DepartmentPage from "./components/Department/DepartmentPage";
+import BenefitPlanPage from "./components/BenefitPlan/BenefitPlanPage";
 import authService from "./services/AuthService";
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
             <Route path="attendance" element={<AttendancePage />} />
             <Route path="departments" element={<DepartmentPage />} />
             <Route path="notifications/templates" element={<NotificationTemplatesPage />} />
+            <Route path="/benefit-plans" element={<BenefitPlanPage />} />
           </Route>
 
           {/* Public login route */}
