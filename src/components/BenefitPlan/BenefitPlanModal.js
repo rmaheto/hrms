@@ -144,10 +144,10 @@ const BenefitPlanModal = ({ open, onClose, benefitPlan, onSaveBenefitPlan, isEdi
             <Grid item xs={6}>
               <TextField
                   label="Employee Contribution"
-                  name="employeeContribution"
+                  name="fixedEmployeeContribution"
                   fullWidth
                   type="number"
-                  value={formData.employeeContribution}
+                  value={formData.fixedEmployeeContribution}
                   onChange={handleInputChange}
                   sx={compactFieldStyle}
               />

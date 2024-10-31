@@ -4,8 +4,10 @@ import EmployeeTable from "./EmployeeTable";
 import EmployeeModal from "./EmployeeModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
 import DeleteConfirmationModal from "../GlobalComponents/DeleteConfirmationModal";
+import BenefitAssignmentModal from "../Employees/BenefitAssignmentModal";
 import employeeService from "../../services/EmployeeService";
 import departmentService from "../../services/DepartmentService";
+import employeeBenefitService from "../../services/EmployeeBenefitService";
 
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState([]);
@@ -16,11 +18,14 @@ const EmployeesPage = () => {
     employeeModal: false,
     viewModal: false,
     deleteModal: false,
+    benefitAssignmentModal: false,
   });
   const [isEditing, setIsEditing] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selectedEmployeeForBenefits, setSelectedEmployeeForBenefits] = useState(null);
+  const [assignedBenefits, setAssignedBenefits] = useState([]);
 
   useEffect(() => {
     loadData();
@@ -73,6 +78,7 @@ const EmployeesPage = () => {
       employeeModal: true,
       viewModal: false,
       deleteModal: false,
+      benefitAssignmentModal: false,
     });
     setSelectedEmployee(null);
     setIsEditing(false);
@@ -83,6 +89,7 @@ const EmployeesPage = () => {
       employeeModal: true,
       viewModal: false,
       deleteModal: false,
+      benefitAssignmentModal: false,
     });
     setSelectedEmployee(employee);
     setIsEditing(true);
@@ -93,6 +100,7 @@ const EmployeesPage = () => {
       employeeModal: false,
       viewModal: true,
       deleteModal: false,
+      benefitAssignmentModal: false,
     });
     setSelectedEmployee(employee);
   };
@@ -102,6 +110,7 @@ const EmployeesPage = () => {
       employeeModal: false,
       viewModal: false,
       deleteModal: true,
+      benefitAssignmentModal: false,
     });
     setSelectedEmployee(employee);
   };
@@ -142,6 +151,19 @@ const EmployeesPage = () => {
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleAssignBenefitsClick = async (employee) => {
+    setSelectedEmployeeForBenefits(employee);
+    const benefits = await employeeBenefitService.getEmployeeBenefits(employee.id);
+    setAssignedBenefits(benefits.data);
+    setModalStates({ ...modalStates, benefitAssignmentModal: true });
+  };
+
+  const handleAssignBenefits = async (selectedPlanIds) => {
+    await employeeBenefitService.assignBenefits(selectedEmployeeForBenefits.id, selectedPlanIds);
+    loadData();
+    handleModalClose("benefitAssignmentModal");
   };
 
   return (
@@ -192,6 +214,7 @@ const EmployeesPage = () => {
               onViewEmployee={handleViewEmployee}
               onEditEmployee={handleEditEmployee}
               onDeleteEmployee={handleDeleteClick}
+              onAssignBenefits={handleAssignBenefitsClick}
           />
 
           {/* Modals */}
@@ -202,6 +225,14 @@ const EmployeesPage = () => {
               onSaveEmployee={handleSaveEmployee}
               isEditing={isEditing}
               departments={departments}
+          />
+          <BenefitAssignmentModal
+              open={modalStates.benefitAssignmentModal}
+              onClose={() => handleModalClose("benefitAssignmentModal")}
+              employeeId={selectedEmployeeForBenefits?.id}
+              assignedBenefits={assignedBenefits}
+              employeeName={`${selectedEmployeeForBenefits?.firstName} ${selectedEmployeeForBenefits?.lastName}`}
+              onSave={handleAssignBenefits}
           />
 
           <ViewEmployeeModal
@@ -216,7 +247,7 @@ const EmployeesPage = () => {
               onConfirm={handleDeleteEmployee}
               entity={selectedEmployee}
               entityName="employee"
-              getDisplayText={(employee) => `${employee.firstName} ${employee.lastName}, `}
+              getDisplayText={(employee) => `${employee.firstName} ${employee.lastName}`}
           />
         </CardContent>
       </Card>

@@ -42,6 +42,24 @@ const BenefitPlanPage = () => {
     setFilteredPlans(filtered);
   };
 
+  const handleSaveBenefit = async (benefitPlan) => {
+    try {
+      if (isEditing) {
+        const updatedBenefit = await benefitPlanService.updateBenefitPlan(benefitPlan);
+        setBenefitPlans((prevBenefitPlan) =>
+            prevBenefitPlan.map((plan) => (plan.id === updatedBenefit.id ? updatedBenefit : plan))
+        );
+      } else {
+        const newBenefitPlan = await benefitPlanService.createBenefitPlan(benefitPlan);
+        setBenefitPlans((prevBenefitPlan) => [...prevBenefitPlan, newBenefitPlan]);
+      }
+      handleModalClose("benefitPlanModal");
+      fetchBenefitPlans();
+    } catch (error) {
+      console.error("Error saving benefit plan:", error);
+    }
+  };
+
   const handleAddBenefitPlan = () => {
     setIsEditing(false);
     setSelectedPlan(null);
@@ -129,7 +147,7 @@ const BenefitPlanPage = () => {
               open={modalStates.benefitPlanModal}
               onClose={() => handleModalClose("benefitPlanModal")}
               benefitPlan={selectedPlan}
-              onSaveBenefitPlan={fetchBenefitPlans}
+              onSaveBenefitPlan={handleSaveBenefit}
               isEditing={isEditing}
           />
 

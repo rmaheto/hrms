@@ -50,9 +50,9 @@ const createBenefitPlan = async (benefitPlanDto) => {
   }
 };
 
-const updateBenefitPlan = async (id, benefitPlanDto) => {
+const updateBenefitPlan = async (benefitPlanDto) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/${benefitPlanDto.id}`, {
       method: "PUT",
       headers: getHeaders(),
       body: JSON.stringify(benefitPlanDto),
